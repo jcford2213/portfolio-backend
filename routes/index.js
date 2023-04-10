@@ -7,9 +7,8 @@ router.get('/', (req, res) => {
   res.send("<p>Yo, Sup dawg</p>")
 });
 
-router.post('/', async (req, res) => {
-  await sendEmail(req.body)
-  console.log(req.body)
+router.post('/', (req, res) => {
+  sendEmail(req.body);
   res.sendStatus(200);
 });
 

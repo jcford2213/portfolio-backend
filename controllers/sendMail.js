@@ -7,6 +7,7 @@ function sendEmail (message = { name: '', email: '', message: ''}) {
   <h1>This message is from ${message.name} at ${message.email}</h1>
   <p>${message.message}</p>
   </div>`
+
   const transporter = nodemailer.createTransport({
     service: "Outlook365",
     auth: {
@@ -14,18 +15,20 @@ function sendEmail (message = { name: '', email: '', message: ''}) {
       pass: password
     }
   });
+
   let options = {
-    from: '"Jackson Crantford" <jackson-crantford@outlook.com>',
-    to: 'jackson-crantford@outlook.com',
+    from: 'jackson-crantford@outlook.com',
+    to: 'jcranfrd@gmail.com',
     subject: `Message from ${message.name}`,
     html: emailHTML
   } 
+
   transporter.sendMail(options, (err, info) => {
     if(err) {
       console.log('Error' + err);
       return;
     }
-    console.log('Email Sent' + info);
+    console.log(`Email sent - ${JSON.stringify(info.envelope)}`);
   })
 }
 
