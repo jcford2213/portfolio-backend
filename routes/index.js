@@ -10,6 +10,7 @@ router.post('/', [
   check('message').notEmpty().withMessage('Mesage cannot be empty').trim().escape()
 ],
 async (req, res) => {
+  console.log('Post Received');
   try {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
