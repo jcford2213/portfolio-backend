@@ -1,34 +1,41 @@
 const nodemailer = require('nodemailer');
 
 function sendEmail (message = { name: '', email: '', message: ''}) {
-  const username = process.env.USER;
-  const password = process.env.PASS;
-  const emailHTML = `<div>
-  <h1>This message is from ${message.name} at ${message.email}</h1>
-  <p>${message.message}</p>
-  </div>`
+  return new Promise((resolve, reject) => {
+    try{
+      const transporter = nodemailer.createTransport({
+        service: "Outlook365",
+        auth: {
+          user: process.env.USER,
+          pass: process.env.PASS
+        }
+      });
 
-  const transporter = nodemailer.createTransport({
-    service: "Outlook365",
-    auth: {
-      user: username,
-      pass: password
+      const messageToMe = `<div>
+      <h2>An email from the website</h2>
+      <h3>Name: ${message.name}<br>Email: ${message.email}</h3>
+      <h4>Message:</h4>
+      <p>${message.message}</p>
+      </div>`
+
+      let emailToMe = {
+        from: 'jackson-crantford@outlook.com',
+        to: 'jackson-crantford@outlook.com',
+        subject: `Message from ${message.name}`,
+        html: messageToMe
+      } 
+
+      transporter.sendMail(emailToMe, (err, info) => {
+        if(err) {
+          throw new Error(err.message);
+        }
+        console.log(`Email sent - ${JSON.stringify(info.envelope)}`);
+      })
+      resolve();
     }
-  });
-
-  let options = {
-    from: 'jackson-crantford@outlook.com',
-    to: 'jcranfrd@gmail.com',
-    subject: `Message from ${message.name}`,
-    html: emailHTML
-  } 
-
-  transporter.sendMail(options, (err, info) => {
-    if(err) {
-      console.log('Error' + err);
-      return;
+    catch(err) {
+      reject(err.message);
     }
-    console.log(`Email sent - ${JSON.stringify(info.envelope)}`);
   })
 }
 

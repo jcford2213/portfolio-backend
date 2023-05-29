@@ -1,17 +1,26 @@
 const express = require('express');
+const { check, validationResult } = require('express-validator');
 const sendEmail = require('../controllers/sendMail');
-
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send("<p>Yo, Sup dawg</p>")
-});
-
-router.post('/', (req, res) => {
-  sendEmail(req.body);
-  res.sendStatus(200);
+router.post('/', [
+  check('name').notEmpty().withMessage('Name cannot be empty').trim().escape(),
+  check('email').notEmpty().withMessage('Email cannot be empty')
+    .isEmail().withMessage('Email is not a valid email address').normalizeEmail(),
+  check('message').notEmpty().withMessage('Mesage cannot be empty').trim().escape()
+],
+async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+      throw new Error();
+    }
+    await sendEmail(req.body);
+    res.sendStatus(200) ;
+  }
+  catch(err) {
+    res.sendStatus(400)
+  }
 });
 
 module.exports = router;
-
-// Test comment
