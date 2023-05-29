@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 function sendEmail (message = { name: '', email: '', message: ''}) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try{
       const transporter = nodemailer.createTransport({
         service: "Outlook365",
@@ -25,12 +25,8 @@ function sendEmail (message = { name: '', email: '', message: ''}) {
         html: messageToMe
       } 
 
-      transporter.sendMail(emailToMe, (err, info) => {
-        if(err) {
-          throw new Error(err.message);
-        }
-        console.log(`Email sent - ${JSON.stringify(info.envelope)}`);
-      })
+      await transporter.sendMail(emailToMe);
+      console.log(`Email sent`);
       resolve();
     }
     catch(err) {
