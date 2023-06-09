@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-function sendEmail (message = { name: '', email: '', message: ''}) {
+function sendEmail (message = { name: '', email: '', subject: '', message: ''}) {
   return new Promise(async (resolve, reject) => {
     try{
       const transporter = nodemailer.createTransport({
@@ -11,26 +11,24 @@ function sendEmail (message = { name: '', email: '', message: ''}) {
         }
       });
 
-      const messageToMe = `<div>
-      <h2>An email from the website</h2>
-      <h3>Name: ${message.name}<br>Email: ${message.email}</h3>
-      <h4>Message:</h4>
-      <p>${message.message}</p>
-      </div>`
-
       let emailToMe = {
-        from: 'jackson-crantford@outlook.com',
+        from: {
+          name: `${message.email}`,
+          address: 'jackson-crantford@outlook.com'
+        },
         to: 'jackson-crantford@outlook.com',
-        subject: `Message from ${message.name}`,
-        html: messageToMe
+        subject: `${message.subject}`,
+        text: `${message.message}`,
+        html: `<p>${message.message}</p>`
       } 
 
       await transporter.sendMail(emailToMe);
-      console.log(`Email sent`);
+      console.log(`Email sent: From ${message.name} at ${message.email} subject ${message.subject}`);
       resolve();
     }
     catch(err) {
-      reject(err.message);
+      console.log(err.message);
+      reject('Server error. Message failed to send.');
     }
   })
 }
